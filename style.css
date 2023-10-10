@@ -205,5 +205,19 @@ a:hover {
     }
 }
 
+@media screen and (max-width: 580px) {
+    #email_label,
+    #linkedin_label,
+    #resume_label,
+    #github_label {
+        font-size: 5px;
+    }
+
+    .profile_image{
+        width: 200px;
+        height: 200px;
+    }
+}
+
 
 
