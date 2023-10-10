@@ -120,7 +120,7 @@ a:hover {
     margin-top: 30px;
     color: #e3e1dc;
     font-weight: bold;
-    font-size: 30px;
+    font-size: 35px;
 }
 
 .website_content {
@@ -222,6 +222,14 @@ a:hover {
     .profile_image{
         width: 200px;
         height: 200px;
+    }
+
+    #titles {
+        font-size: 20px;
+    }
+
+    .website_content{
+        font-size: 20px;
     }
 }
 
