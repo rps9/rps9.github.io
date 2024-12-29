@@ -7,6 +7,7 @@ header {
 body {
     margin: 0;
     background-color: #333331;
+    font-family: 'Roboto Slab', serif;
 }
 
 #name {
@@ -16,8 +17,6 @@ body {
     margin-top: 25px;
     margin-left: 25%;
     font-size: 40px;
-    border: solid white;
-    box-shadow: 2px 2px 0;
 }
 
 .top_tabs {
@@ -116,7 +115,8 @@ a:hover {
 }
 
 /*about me stuff*/
-#titles {
+.titles {
+    font-family: 'Roboto Slab', serif;
     margin-top: 30px;
     color: #e3e1dc;
     font-weight: bold;
