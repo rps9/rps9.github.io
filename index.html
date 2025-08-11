@@ -1,128 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Ryan Smith's Website</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Shrikhand&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/9a47c29896.js" crossorigin="anonymous"></script>
-</head>
-<body>
-    <header>
-        <div class="container">
-            <p id="name">Ryan Smith's Personal Website</p>
-            <nav class="top_tabs">
-                <div class="email-container">
-                    <a class="fa-solid fa-envelope email" href="https://mail.google.com/mail/?view=cm&fs=1&to=ryans6892@gmail.com" target="_new">
-                        <p id="email_label">Email</p>
-                        <div class="bar"></div>
-                    </a>
-                </div>
-                <div class="linkedin-container">
-                    <a class="fa-brands fa-linkedin linkedin" href="https://www.linkedin.com/in/ryan-smith-690337244/" target="_new">
-                        <p id="linkedin_label">LinkedIn</p>
-                        <div class="bar"></div>
-                    </a>
-                </div>  
-                <div class="resume-container">
-                    <a class="fa-solid fa-file resume" href="https://docs.google.com/document/d/1qk2aDQ1JnJUfilCgZJL8ecLRSw8rKVVdLS_CUBa8fac/edit?usp=sharing" target="_new">
-                        <p id="resume_label">Resume</p>
-                        <div class="bar"></div>
-                    </a>
-                </div>
-                <div class="github-container">
-                    <a class="fa-brands fa-github github" href="https://github.com/rps9?tab=repositories" target="_new">
-                        <p id="github_label">GitHub</p>
-                        <div class="bar"></div>
-                    </a>
-                </div>
-            </nav>
-        </div>
-    </header>
-    <div class="website_content">
-        <p class="titles">About Me</p>
-        <div id="age" class="about_me"></div>
-        <article>
-            <img src="prof_pic.jpeg" class="profile_image" alt="Profile Image" width = 400px>
-            <p>Hello and welcome to my personal website! This is a work in progress and I will continue to update this as my knowlege grows.</p>
-            <p>Feel free to poke around and contact me by clicking the email tab at the top. Thanks for stopping by!</p>
-        </article>
-
-        <p class= 'titles'>Experience</p>
-        <article>
-            <p>Superior Packaging and Finishing</p>
-            <p>Boston University IT</p>
-        </article>
-    </div>
-    <script>
-        // Function to calculate age based on birthdate
-        function calculateAge(birthDate) {
-            const today = new Date();
-            const birthDateObj = new Date(birthDate);
-
-            const ageInMilliseconds = today - birthDateObj;
-            const ageInSeconds = Math.floor(ageInMilliseconds / 1000);
-
-            const years = Math.floor(ageInSeconds / 31536000); // 365 days
-            const months = Math.floor((ageInSeconds % 31536000) / 2628000); // 30.44 days
-            const weeks = Math.floor((ageInSeconds % 2628000) / 604800); // 7 days
-            const days = Math.floor((ageInSeconds % 604800) / 86400);
-            const hours = Math.floor((ageInSeconds % 86400) / 3600);
-            const minutes = Math.floor((ageInSeconds % 3600) / 60);
-            const seconds = ageInSeconds % 60;
-
-            const ageString = [];
-
-            if (years > 0) {
-                ageString.push(`${years} ${years === 1 ? 'year' : 'years'}`);
-            }
-            if (months > 0) {
-                ageString.push(`${months} ${months === 1 ? 'month' : 'months'}`);
-            }
-            if (weeks > 0) {
-                ageString.push(`${weeks} ${weeks === 1 ? 'week' : 'weeks'}`);
-            }
-            if (days > 0) {
-                ageString.push(`${days} ${days === 1 ? 'day' : 'days'}`);
-            }
-            if (hours > 0) {
-                ageString.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
-            }
-            if (minutes > 0) {
-                ageString.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
-            }
-            if (seconds > 0) {
-                ageString.push(`${seconds} ${seconds === 1 ? 'second' : 'seconds'}`);
-            }
-
-            // Combine the ageString with "and" where needed
-            if (ageString.length > 1) {
-                const lastElement = ageString.pop();
-                return `${ageString.join(', ')} and ${lastElement}`;
-            } else {
-                return ageString[0];
-            }
-        }
-
-        // Your birthdate
-        const birthDate = '2004-02-20';
-
-        // Get the element where the age will be displayed
-        const ageElement = document.getElementById('age');
-
-        // Function to update the age every second
-        function updateAge() {
-            const age = calculateAge(birthDate);
-            ageElement.textContent = `I am ${age} old!`;
-        }
-
-        // Update the age immediately and then every second
-        updateAge();
-        setInterval(updateAge, 1000); // 1000 milliseconds = 1 second
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ryan's Portfolio</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
