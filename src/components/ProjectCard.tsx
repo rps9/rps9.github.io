@@ -1,15 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 
 interface ProjectCardProps {
   title: string;
   description: string;
   image: string;
   tags: string[];
+  to?: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, image, tags}) => {
-  return (
-    <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-700">
+const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, image, tags, to}) => {
+  const card = (
+    <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-700 block h-full">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <div className="p-6">
         <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>
@@ -27,6 +29,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, image, ta
       </div>
     </div>
   );
+
+  if (to) {
+    return (
+      <Link to={to} className={`block h-full`}>
+        {card}
+      </Link>
+    )
+  }
+
+  return card
 };
 
 export default ProjectCard;
