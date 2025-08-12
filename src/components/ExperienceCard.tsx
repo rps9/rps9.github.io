@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 
-interface ProjectCardProps {
+interface ExperienceCardProps {
   title: string;
   description: string;
   image: string;
@@ -9,7 +9,7 @@ interface ProjectCardProps {
   to?: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, image, tags, to}) => {
+const ExperienceCard: React.FC<ExperienceCardProps> = ({ title, description, image, tags, to}) => {
   const card = (
     <div className="bg-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-700 block h-full">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
@@ -41,4 +41,4 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, image, ta
   return card
 };
 
-export default ProjectCard;
+export default ExperienceCard;
