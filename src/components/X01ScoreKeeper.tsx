@@ -1,4 +1,3 @@
-// src/components/X01ScoreKeeper.tsx
 import { useEffect, useRef, useState } from 'react';
 
 type Mult = 1 | 2 | 3;
@@ -12,12 +11,14 @@ const ROWS: Cell[][] = [
 
 interface Props {
   onScore: (points: number, detail: { cell: Cell; mult: Mult; label: string; isDouble: boolean }) => void;
+  onMiss: () => void;
+  onUndo: () => void;
   disabled?: boolean;
   currentScore: number;
   doubledIn: boolean;
 }
 
-export default function X01ScoreKeeper({ onScore, disabled = false, currentScore, doubledIn }: Props) {
+export default function X01ScoreKeeper({ onScore, onMiss, onUndo, disabled = false, currentScore, doubledIn }: Props) {
   const [mult, setMult] = useState<Mult>(1);
   const [selected, setSelected] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
@@ -76,22 +77,42 @@ export default function X01ScoreKeeper({ onScore, disabled = false, currentScore
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Multiplier toggle */}
-      <div className="flex items-center gap-2">
-        {[1, 2, 3].map((m) => (
-          <button
-            key={m}
-            onClick={(e) => { setMult(m as Mult); (e.currentTarget as HTMLButtonElement).blur(); }}
-            className={`h-10 px-4 rounded-lg border transition-colors
-              ${mult === m
-                ? 'bg-blue-500 text-white border-blue-400'
-                : 'bg-gray-800/80 text-gray-200 border-gray-700 hover:bg-gray-700'}`}
-            aria-pressed={mult === m}
-            disabled={disabled}
-          >
-            x{m}
-          </button>
-        ))}
+    <div className="flex items-center gap-2">
+      {[1, 2, 3].map((m) => (
+        <button
+          key={m}
+          onClick={(e) => { setMult(m as Mult); (e.currentTarget as HTMLButtonElement).blur(); }}
+          className={`h-10 px-4 rounded-lg border transition-colors
+            ${mult === m
+              ? 'bg-blue-500 text-white border-blue-400'
+              : 'bg-gray-800/80 text-gray-200 border-gray-700 hover:bg-gray-700'}`}
+          aria-pressed={mult === m}
+          disabled={disabled}
+        >
+          x{m}
+        </button>
+      ))}
+
+      {/* Miss & Undo */}
+      <div className="ml-auto flex items-center gap-2">
+        <button
+          onClick={() => { if (!disabled) onMiss(); }}
+          disabled={disabled}
+          className="h-10 px-4 rounded-lg border border-gray-700 bg-gray-800/80 text-gray-200 hover:bg-gray-700 transition-colors disabled:opacity-50"
+          title="Record a miss (0 points)"
+        >
+          Miss
+        </button>
+        <button
+          onClick={() => { if (!disabled) onUndo(); }}
+          disabled={disabled}
+          className="h-10 px-4 rounded-lg border border-gray-700 bg-gray-800/80 text-gray-200 hover:bg-gray-700 transition-colors disabled:opacity-50"
+          title="Undo last throw"
+        >
+          Undo
+        </button>
       </div>
+    </div>
 
       {/* Numbers grid */}
       <div className="mt-4 rounded-xl border border-gray-700 bg-gray-900/70 shadow-sm overflow-hidden">

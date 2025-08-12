@@ -103,6 +103,9 @@ function Home() {
             <SkillBadge name="Linux"/>
             <SkillBadge name="Networking"/>
             <SkillBadge name="HTML, CSS, JS"/>
+            <SkillBadge name="MatLab"/>
+            <SkillBadge name="PyTorch"/>
+            <SkillBadge name="Excel"/>
           </div>
         </div>
       </section>
@@ -112,7 +115,7 @@ function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-8 text-white">Let's Connect</h2>
           <p className="text-xl text-gray-300 mb-8">
-            I'm always open to any discussion and oppurtunities.
+            I'm always open to any discussion and opportunities.
           </p>
           <a
             href="https://mail.google.com/mail/?view=cm&fs=1&to=ryans6892@gmail.com" target="_blank"

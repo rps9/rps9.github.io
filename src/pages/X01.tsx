@@ -2,10 +2,24 @@ import { useRef, useState } from 'react';
 import X01Player from '../components/X01Player';
 import X01ScoreKeeper from '../components/X01ScoreKeeper';
 import Header from '../components/Header';
+import { RotateCcw } from "lucide-react";
+
 
 type Player = { id: number; name: string; score: number; doubledIn: boolean };
 
+type ThrowRecord = {
+  playerId: number;
+  prevScore: number;
+  prevDoubledIn: boolean;
+  prevActiveId: number | null;
+  prevThrowsThisTurn: number;
+  prevGameOver: { winnerId: number } | null;
+  points: number;
+  isDouble: boolean;
+};
+
 export default function X01() {
+    const [history, setHistory] = useState<ThrowRecord[]>([]);
     const [startScore, setStartScore] = useState<number>(301);
     const [players, setPlayers] = useState<Player[]>([]);
     const [removeMode, setRemoveMode] = useState(false);
@@ -56,51 +70,121 @@ export default function X01() {
     const applyScore = (points: number, detail: { isDouble: boolean }) => {
         if (gameOver || activeId === null || !players.length) return;
 
+        const curr = players.find(p => p.id === activeId)!;
         let valid = false;
         let winnerId: number | null = null;
 
         setPlayers(prev => prev.map(p => {
-        if (p.id !== activeId) return p;
+            if (p.id !== activeId) return p;
 
-        // If not doubled in yet, only a double can start scoring
-        if (!p.doubledIn) {
-            if (!detail.isDouble) return p; // invalid – must double in
+            if (!p.doubledIn) {
+            if (!detail.isDouble) return p; // must double-in
             const nextScore = p.score - points;
-            if (nextScore < 0) return p;     // bust below zero
-            // double-in dart is valid
+            if (nextScore < 0) return p; // bust
             valid = true;
             const doubledIn = true;
-
-            if (nextScore === 0) {
-            winnerId = p.id;
-            }
+            if (nextScore === 0) winnerId = p.id;
             return { ...p, score: nextScore, doubledIn };
-        }
+            }
 
-        // Already doubled in
-        const nextScore = p.score - points;
-        if (nextScore < 0) return p; 
-        if (nextScore === 0 && !detail.isDouble) return p;
-        valid = true;
-        if (nextScore === 0) winnerId = p.id;
-        return { ...p, score: nextScore };
+            const nextScore = p.score - points;
+            if (nextScore < 0) return p;
+            if (nextScore === 0 && !detail.isDouble) return p; // must double-out
+            valid = true;
+            if (nextScore === 0) winnerId = p.id;
+            return { ...p, score: nextScore };
         }));
 
+        if (valid) {
+            const rec: ThrowRecord = {
+            playerId: activeId,
+            prevScore: curr.score,
+            prevDoubledIn: curr.doubledIn,
+            prevActiveId: activeId,
+            prevThrowsThisTurn: throwsThisTurn,
+            prevGameOver: gameOver,
+            points,
+            isDouble: detail.isDouble,
+            };
+            setHistory(h => [...h, rec]);
+        }
+
         if (winnerId) {
-        setGameOver({ winnerId });
-        return;
+            setGameOver({ winnerId });
+            return;
         }
 
         if (valid) {
-        setThrowsThisTurn(t => {
+            setThrowsThisTurn(t => {
             const nt = t + 1;
             if (nt >= 3) {
-            advanceToNextPlayer();
-            return 0;
+                advanceToNextPlayer();
+                return 0;
             }
             return nt;
-        });
+            });
         }
+    };
+
+    // Miss or don't score points
+    const registerMiss = () => {
+        if (gameOver || activeId === null || !players.length) return;
+        const curr = players.find(p => p.id === activeId)!;
+
+        const rec: ThrowRecord = {
+            playerId: activeId,
+            prevScore: curr.score,
+            prevDoubledIn: curr.doubledIn,
+            prevActiveId: activeId,
+            prevThrowsThisTurn: throwsThisTurn,
+            prevGameOver: gameOver,
+            points: 0,
+            isDouble: false,
+        };
+        setHistory(h => [...h, rec]);
+
+        setThrowsThisTurn(t => {
+            const nt = t + 1;
+            if (nt >= 3) { advanceToNextPlayer(); return 0; }
+            return nt;
+        });
+    };
+
+    // Undo last throw or miss
+    const undoLast = () => {
+        setHistory(h => {
+            if (h.length === 0) return h;
+            const last = h[h.length - 1];
+
+            setPlayers(prev =>
+            prev.map(p =>
+                p.id === last.playerId
+                ? { ...p, score: last.prevScore, doubledIn: last.prevDoubledIn }
+                : p
+            )
+            );
+
+            setActiveId(last.prevActiveId);
+            setThrowsThisTurn(last.prevThrowsThisTurn);
+            setGameOver(last.prevGameOver);
+
+            return h.slice(0, -1);
+        });
+    };
+
+    const restartGame = () => {
+        if (!players.length) return;
+        const firstId = players[0].id; // Player 1 stays first in order
+
+        setPlayers(prev =>
+            prev.map(p => ({ ...p, score: startScore, doubledIn: false }))
+        );
+
+        setActiveId(firstId);
+        setThrowsThisTurn(0);
+        setGameOver(null);
+        setRemoveMode(false);
+        setHistory([]);
     };
 
     return (
@@ -122,7 +206,7 @@ export default function X01() {
                     id="x01-start"
                     type="number"
                     inputMode="numeric"
-                    placeholder="501"
+                    placeholder="X01"
                     value={startScore}
                     onChange={(e) => setStartScore(Number(e.target.value || 0))}
                     className="w-full bg-gray-900/70 text-white border border-gray-700 rounded-lg px-4 py-3 shadow-sm
@@ -165,6 +249,16 @@ export default function X01() {
             {gameOver && activeId !== null ? (
                 <span className="text-green-400 font-semibold">
                 Game over — Winner: {players.find(p => p.id === gameOver.winnerId)?.name}
+                <button
+                onClick={restartGame}
+                disabled={players.length === 0}
+                className="inline-flex items-center justify-center ml-3 h-9 px-3 rounded-lg bg-gray-700 text-white
+                            hover:bg-gray-600 transition-colors shadow-sm border border-gray-600"
+                title="Restart game"
+                >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Restart?
+                </button>
                 </span>
             ) : activeId !== null ? (
                 <>
@@ -179,10 +273,12 @@ export default function X01() {
             {/* Score keeper */}
             <div className="mt-6">
                 <X01ScoreKeeper
-                onScore={(points, detail) => applyScore(points, { isDouble: detail.isDouble })}
-                disabled={removeMode || !players.length || activeId === null || !!gameOver}
-                currentScore={activePlayer ? activePlayer.score : 0}     // <-- NEW
-                doubledIn={activePlayer ? activePlayer.doubledIn : false} // <-- NEW
+                    onScore={(points, detail) => applyScore(points, { isDouble: detail.isDouble })}
+                    onMiss={registerMiss}
+                    onUndo={undoLast}
+                    disabled={removeMode || !players.length || activeId === null || !!gameOver}
+                    currentScore={activePlayer ? activePlayer.score : 0}
+                    doubledIn={activePlayer ? activePlayer.doubledIn : false}
                 />
             </div>
 
