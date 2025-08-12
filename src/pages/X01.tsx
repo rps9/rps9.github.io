@@ -71,16 +71,15 @@ export default function X01() {
             const doubledIn = true;
 
             if (nextScore === 0) {
-            // double-out on the same dart is allowed
             winnerId = p.id;
             }
             return { ...p, score: nextScore, doubledIn };
         }
 
-        // Already in: normal scoring, but must double-out on zero
+        // Already doubled in
         const nextScore = p.score - points;
-        if (nextScore < 0) return p;                 // bust below zero
-        if (nextScore === 0 && !detail.isDouble) return p; // must double out
+        if (nextScore < 0) return p; 
+        if (nextScore === 0 && !detail.isDouble) return p;
         valid = true;
         if (nextScore === 0) winnerId = p.id;
         return { ...p, score: nextScore };
@@ -113,7 +112,7 @@ export default function X01() {
 
                 <div className="w-full max-w-xs">
                 <label htmlFor="x01-start" className="block text-sm font-medium text-gray-400 mb-2">
-                    Starting score (e.g., 301, 401, 501, 701)
+                    Starting score
                 </label>
                 <input
                     id="x01-start"
