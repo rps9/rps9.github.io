@@ -7,12 +7,11 @@ import X01 from './pages/X01';
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/darts" element={<Darts />} />
       <Route path="/darts/cricket" element={<Cricket />} />
       <Route path="/darts/x01" element={<X01 />} />
-      {/* Optional catch-all */}
-      {/* <Route path="*" element={<Home />} /> */}
+      <Route path="*" element={<Home />} />
     </Routes>
   );
 }

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import X01Player from '../components/X01Player';
 import X01ScoreKeeper from '../components/X01ScoreKeeper';
+import Header from '../components/Header';
 
 type Player = { id: number; name: string; score: number; doubledIn: boolean };
 
@@ -103,7 +104,10 @@ export default function X01() {
     };
 
     return (
+        <>
+        <Header />
         <section className="min-h-screen px-4 py-8 bg-gradient-to-b from-gray-900 to-gray-800">
+        
         <div className="w-full max-w-6xl mx-auto">
             {/* Top controls */}
             <div className="flex flex-wrap items-end justify-between gap-4">
@@ -201,5 +205,6 @@ export default function X01() {
             </div>
         </div>
         </section>
+        </>
     );
 }

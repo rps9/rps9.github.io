@@ -1,4 +1,4 @@
-// src/pages/Darts.tsx
+import Header from '../components/Header';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -16,6 +16,8 @@ export default function Darts() {
   const targetPath = game === 'cricket' ? '/darts/cricket' : '/darts/x01';
 
   return (
+    <>
+    <Header />
     <section className="min-h-screen flex flex-col justify-center items-center relative px-4 bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="max-w-3xl w-full mx-auto text-center">
         <h1 className="text-5xl md:text-6xl font-bold text-white">
@@ -66,5 +68,6 @@ export default function Darts() {
         </div>
       </div>
     </section>
+    </>
   );
 }
