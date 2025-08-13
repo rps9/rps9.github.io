@@ -20,10 +20,10 @@ export default function AboutMe() {
             <div className="w-full">
                 <Slideshow
                     slides={[
-                        { src: "../assets/images/biwa.png", caption: "Me at Lake Biwa" },
-                        { src: "../assets/images/biwa_boats.png", caption: "Lake Biwa Boats" },
-                        { src: "../assets/images/vermont.png", caption: "Quechee, Vermont" },
-                        { src: "../assets/images/wini.png", caption: "Lake Winnipesaukee" }
+                        { src: "../public/biwa.png", caption: "Me at Lake Biwa" },
+                        { src: "../public/biwa_boats.png", caption: "Lake Biwa Boats" },
+                        { src: "../public/vermont.png", caption: "Quechee, Vermont" },
+                        { src: "../public/wini.png", caption: "Lake Winnipesaukee" }
                     ]}
                 />
             </div>
