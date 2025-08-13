@@ -8,18 +8,18 @@ import { RotateCcw } from "lucide-react";
 type Player = { id: number; name: string; score: number; doubledIn: boolean };
 
 type ThrowRecord = {
-  playerId: number;
-  prevScore: number;
-  prevDoubledIn: boolean;
-  prevActiveId: number | null;
-  prevThrowsThisTurn: number;
-  prevGameOver: { winnerId: number } | null;
-  points: number;
-  isDouble: boolean;
+    playerId: number;
+    prevScore: number;
+    prevDoubledIn: boolean;
+    prevActiveId: number | null;
+    prevThrowsThisTurn: number;
+    prevGameOver: { winnerId: number } | null;
+    points: number;
+    isDouble: boolean;
 };
 
 export default function X01() {
-    const [history, setHistory] = useState<ThrowRecord[]>([]);
+    const [, setHistory] = useState<ThrowRecord[]>([]);
     const [startScore, setStartScore] = useState<number>(301);
     const [players, setPlayers] = useState<Player[]>([]);
     const [removeMode, setRemoveMode] = useState(false);
@@ -59,7 +59,7 @@ export default function X01() {
         });
     };
 
-    const advanceToNextPlayer = () => {
+    const endTurn = () => {
         if (!players.length || activeId === null) return;
         const idx = players.findIndex(p => p.id === activeId);
         const nextIdx = (idx + 1) % players.length;
@@ -67,87 +67,55 @@ export default function X01() {
         setThrowsThisTurn(0);
     };
 
-    const applyScore = (points: number, detail: { isDouble: boolean }) => {
+    const registerThrow = (points: number, { isDouble }: { isDouble: boolean }) => {
         if (gameOver || activeId === null || !players.length) return;
 
         const curr = players.find(p => p.id === activeId)!;
-        let valid = false;
+        const prevScore = curr.score;
+        const prevDoubledIn = curr.doubledIn;
+
         let winnerId: number | null = null;
 
         setPlayers(prev => prev.map(p => {
             if (p.id !== activeId) return p;
 
+            // Not doubled-in yet
             if (!p.doubledIn) {
-            if (!detail.isDouble) return p; // must double-in
-            const nextScore = p.score - points;
-            if (nextScore < 0) return p; // bust
-            valid = true;
-            const doubledIn = true;
-            if (nextScore === 0) winnerId = p.id;
-            return { ...p, score: nextScore, doubledIn };
+                if (!isDouble) {
+                    return p;
+                }
+                const ns = p.score - points;
+                return { ...p, score: ns, doubledIn: true };
             }
 
-            const nextScore = p.score - points;
-            if (nextScore < 0) return p;
-            if (nextScore === 0 && !detail.isDouble) return p; // must double-out
-            valid = true;
-            if (nextScore === 0) winnerId = p.id;
-            return { ...p, score: nextScore };
+            // Already doubled-in
+            const ns = p.score - points;
+            if (ns === 0) winnerId = p.id;
+            return { ...p, score: ns };
         }));
 
-        if (valid) {
-            const rec: ThrowRecord = {
+        //History
+        const rec: ThrowRecord = {
             playerId: activeId,
-            prevScore: curr.score,
-            prevDoubledIn: curr.doubledIn,
+            prevScore,
+            prevDoubledIn,
             prevActiveId: activeId,
             prevThrowsThisTurn: throwsThisTurn,
             prevGameOver: gameOver,
             points,
-            isDouble: detail.isDouble,
-            };
-            setHistory(h => [...h, rec]);
-        }
-
-        if (winnerId) {
-            setGameOver({ winnerId });
-            return;
-        }
-
-        if (valid) {
-            setThrowsThisTurn(t => {
-            const nt = t + 1;
-            if (nt >= 3) {
-                advanceToNextPlayer();
-                return 0;
-            }
-            return nt;
-            });
-        }
-    };
-
-    // Miss or don't score points
-    const registerMiss = () => {
-        if (gameOver || activeId === null || !players.length) return;
-        const curr = players.find(p => p.id === activeId)!;
-
-        const rec: ThrowRecord = {
-            playerId: activeId,
-            prevScore: curr.score,
-            prevDoubledIn: curr.doubledIn,
-            prevActiveId: activeId,
-            prevThrowsThisTurn: throwsThisTurn,
-            prevGameOver: gameOver,
-            points: 0,
-            isDouble: false,
+            isDouble,
         };
         setHistory(h => [...h, rec]);
 
-        setThrowsThisTurn(t => {
-            const nt = t + 1;
-            if (nt >= 3) { advanceToNextPlayer(); return 0; }
-            return nt;
-        });
+        if (winnerId) { setGameOver({ winnerId }); return; }
+
+        // Use the dart
+        const nextThrow = throwsThisTurn + 1;
+        if (nextThrow >= 3) {
+            endTurn();
+        } else {
+            setThrowsThisTurn(nextThrow);
+        }
     };
 
     // Undo last throw or miss
@@ -157,11 +125,11 @@ export default function X01() {
             const last = h[h.length - 1];
 
             setPlayers(prev =>
-            prev.map(p =>
-                p.id === last.playerId
-                ? { ...p, score: last.prevScore, doubledIn: last.prevDoubledIn }
-                : p
-            )
+                prev.map(p =>
+                    p.id === last.playerId
+                    ? { ...p, score: last.prevScore, doubledIn: last.prevDoubledIn }
+                    : p
+                )
             );
 
             setActiveId(last.prevActiveId);
@@ -273,8 +241,8 @@ export default function X01() {
             {/* Score keeper */}
             <div className="mt-6">
                 <X01ScoreKeeper
-                    onScore={(points, detail) => applyScore(points, { isDouble: detail.isDouble })}
-                    onMiss={registerMiss}
+                    onScore={(points, detail) => registerThrow(points, { isDouble: detail.isDouble })}
+                    onMiss={() => registerThrow(0, { isDouble: false })}
                     onUndo={undoLast}
                     disabled={removeMode || !players.length || activeId === null || !!gameOver}
                     currentScore={activePlayer ? activePlayer.score : 0}
