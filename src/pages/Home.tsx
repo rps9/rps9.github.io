@@ -106,6 +106,7 @@ function Home() {
             <SkillBadge name="MatLab"/>
             <SkillBadge name="PyTorch"/>
             <SkillBadge name="Excel"/>
+            <SkillBadge name="React"/>
           </div>
         </div>
       </section>
