@@ -74,14 +74,14 @@ export default function Slideshow({ slides }: Props) {
 	return (
 		<div
 			ref={containerRef}
-			className="w-full max-w-4xl mx-auto mt-10 rounded-2xl overflow-hidden bg-gray-800 shadow-lg relative"
+			className="w-full max-w-4xl mx-auto my-10 rounded-2xl overflow-hidden bg-gray-800 shadow-lg relative"
 			aria-roledescription="carousel"
 		>
 			{/* Image */}
 			<div className="relative">
 				<img
 					src={slides[idx].src}
-					className="w-full h-64 md:h-96 object-cover"
+					className="w-full h-80 md:h-[32rem] object-cover"
 					loading="lazy"
 				/>
 				{/* Caption */}

@@ -22,8 +22,9 @@ export default function AboutMe() {
                     slides={[
                         { src: "https://i.imgur.com/8p70vPZ.jpeg", caption: "Me at Lake Biwa" },
                         { src: "https://i.imgur.com/eSuEPZ9.jpeg", caption: "Lake Biwa Boats" },
-                        { src: "https://i.imgur.com/U5Q1EHQ.jpeg", caption: "Quechee, Vermont" },
-                        { src: "https://i.imgur.com/HHqxXOL.jpeg", caption: "Lake Winnipesaukee" }
+                        { src: "https://i.imgur.com/yOcQJrN.jpeg", caption: "Quechee, Vermont" },
+                        { src: "https://i.imgur.com/HHqxXOL.jpeg", caption: "Lake Winnipesaukee" },
+                        { src: "https://i.imgur.com/YYW6mQG.jpeg", caption: "Fushimi Inari Shrine" }
                     ]}
                 />
             </div>
