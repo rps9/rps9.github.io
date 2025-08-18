@@ -1,6 +1,6 @@
 import Header from '../components/Header';
 import { useState } from "react";
-import { Eye, EyeOff, LogIn, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, LogIn, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { setAuth } from "../utils/auth";
 
 export default function SignUp() {
@@ -117,7 +117,6 @@ export default function SignUp() {
                                         onChange={(e) => setPassword(e.target.value)}
                                         onBlur={() => setTouched(t => ({ ...t, password: true }))}
                                         className="w-full rounded-xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 px-4 py-3 pr-12"
-                                        placeholder="••••••••"
                                     />
                                     <button type="button" onClick={() => setShowPw(s => !s)}
                                         className="absolute inset-y-0 right-3 my-auto p-2 text-gray-400 hover:text-gray-200">
@@ -170,7 +169,7 @@ export default function SignUp() {
                                 disabled={!canSubmit}
                                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white font-semibold px-4 py-3"
                             >
-                                {loading ? "Signing up..." : <><LogIn className="h-5 w-5" /> Sign Up</>}
+                                {loading ? <><Loader2 className="h-5 w-5 animate-spin" />This may take a while</> : <><LogIn className="h-5 w-5" /> Sign up</>}
                             </button>
 
                             {formError && (

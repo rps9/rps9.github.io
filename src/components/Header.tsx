@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Home } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { isSignedIn, clearAuth } from "../utils/auth";
+import { isSignedIn, clearAuth, getAuth } from "../utils/auth";
 
 
 type NavItem = { label: string; href?: string; onClick?: () => void };
 
 const HOME_HREF = "/";
 const MENU_LABEL = "Explore";
-const MENU_ITEMS: NavItem[] = [{ label: "Sign In", href: "/sign-in" }, { label: "About Me", href: "/about-me" }, { label: "Darts", href: "/darts" }];
+const DEFAULT_MENU: NavItem[] = [{ label: "Sign In", href: "/sign-in" }, { label: "About Me", href: "/about-me" }, { label: "Darts", href: "/darts" }];
+const ADMIN_MENU: NavItem[] = [{label: "Song Recs", href:"/song-recs"}]
+const OWNER_MENU: NavItem[] = [{label: "Owner Controls", href:"/owner-controls"}]
+
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -16,9 +19,13 @@ export default function Header() {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(isSignedIn());
+  const [role, setRole] = useState<string | null>(getAuth()?.role ?? null);
 
   useEffect(() => {
-      const sync = () => setSignedIn(isSignedIn());
+      const sync = () => {
+        setSignedIn(isSignedIn());
+        setRole(getAuth()?.role ?? null);
+      };
       window.addEventListener("storage", sync);
       return () => window.removeEventListener("storage", sync);
   }, []);
@@ -30,6 +37,13 @@ export default function Header() {
       setMobileOpen(false);
       navigate("/sign-in");
   };
+
+  const roleItems =
+    role === "owner" ? [...ADMIN_MENU, ...OWNER_MENU] :
+    role === "admin" ? ADMIN_MENU :
+    [];
+
+  const MENU_ITEMS = [...DEFAULT_MENU, ...roleItems];
 
   const items: NavItem[] = signedIn
       ? MENU_ITEMS.map(i =>

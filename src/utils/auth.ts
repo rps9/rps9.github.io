@@ -39,7 +39,7 @@ export function isExpired(): boolean {
 	return Date.now() / 1000 >= auth.exp;
 }
 
-export function authHeader() {
+export function authHeader(): Record<string, string> {
 	const auth = getAuth();
 	if (!auth || isExpired()) {
 		clearAuth();
