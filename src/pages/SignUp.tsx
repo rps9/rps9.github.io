@@ -3,20 +3,21 @@ import { useState } from "react";
 import { Eye, EyeOff, LogIn, AlertCircle, CheckCircle2 } from "lucide-react";
 import { setAuth } from "../utils/auth";
 
-export default function SignIn() {
+export default function SignUp() {
     const API_BASE = "https://ryan-website-api.onrender.com";
     const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})[a-z0-9._-]+(?<![._-])$/;
     const PASSWORD_RE = /^[\x21-\x7E]+$/;
 
-    type SignInResponse = { access_token: string; token_type: string; role: string };
+    type SignUpResponse = { ok: boolean; message: string; access_token: string; token_type: string; role: string };
     type ApiError = { detail?: string; message?: string };
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [showPw, setShowPw] = useState(false);
     const [remember, setRemember] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [touched, setTouched] = useState({ username: false, password: false });
+    const [touched, setTouched] = useState({ username: false, email: false, password: false });
     const [formError, setFormError] = useState<string | null>(null);
     const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
@@ -25,16 +26,21 @@ export default function SignIn() {
         (username && !USERNAME_RE.test(username)) ? "Use a-z, 0-9, dot, underscore, or hyphen (no edge/repeat symbols)." :
         null;
 
+    const emailError =
+        (touched.email && (!email || email.length === 0)) ? "Email is required." :
+        (email && (!email.includes("@") || !email.split("@")[1]?.includes("."))) ? "Invalid email format." :
+        null;
+
     const passwordError =
         (touched.password && password.length < 8) ? "Password must be at least 8 characters." :
         (password && (!PASSWORD_RE.test(password) || password.length > 64)) ? "8-64 visible ASCII chars (no spaces)." :
         null;
 
-    const canSubmit = !!username && !!password && !usernameError && !passwordError && !loading;
+    const canSubmit = !!username && !!password && !!email && !usernameError && !passwordError && !emailError && !loading;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setTouched({ username: true, password: true });
+        setTouched({ username: true, email: true, password: true });
         setFormError(null);
         setFormSuccess(null);
 
@@ -42,17 +48,17 @@ export default function SignIn() {
 
         try {
             setLoading(true);
-            const res = await fetch(`${API_BASE}/api/auth/signin`, {
+            const res = await fetch(`${API_BASE}/api/auth/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: username.trim().toLowerCase(), password }),
+                body: JSON.stringify({ username: username.trim().toLowerCase(), password, email }),
             });
 
-            const data: SignInResponse & ApiError = await res.json().catch(() => ({} as any));
+            const data: SignUpResponse & ApiError = await res.json().catch(() => ({} as any));
 
             if (res.ok) {
                 setAuth(data.access_token, data.role, remember);
-                setFormSuccess("Signed in successfully. Redirecting…");
+                setFormSuccess("Signed up successfully. Redirecting…");
                 setTimeout(() => {
                     window.location.assign("/home");
                 }, 450);
@@ -61,10 +67,10 @@ export default function SignIn() {
 
             if (res.status === 401) {
                 setFormError(data.detail || "Invalid username or password.");
-            } else if (res.status === 403) {
-                setFormError("Email not verified. Check your inbox for the verification link.");
+            } else if (res.status === 409) {
+                setFormError("Username already in use.");
             } else {
-                setFormError(data.detail || data.message || "Sign in failed. Please try again.");
+                setFormError(data.detail || data.message || "Sign up failed. Please try again.");
             }
         } catch {
             setFormError("Network error. Please try again.");
@@ -79,7 +85,7 @@ export default function SignIn() {
             <section className="min-h-screen flex flex-col items-center relative px-4 bg-gradient-to-b from-gray-900 to-gray-800">
                 <div className="max-w-md mx-auto w-full py-20">
                     <div className="bg-gray-800/60 backdrop-blur rounded-2xl border border-gray-700 shadow-xl p-8">
-                        <h1 className="text-4xl font-bold text-white text-center mb-2">Sign in</h1>
+                        <h1 className="text-4xl font-bold text-white text-center mb-2">Sign up</h1>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Username */}
@@ -125,6 +131,25 @@ export default function SignIn() {
                                 )}
                             </div>
 
+                            {/* Email */}
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                                    className="w-full rounded-xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 px-4 py-3"
+                                    placeholder="example@gmail.com"
+                                />
+                                {emailError && (
+                                    <p className="mt-2 text-sm text-red-400 flex items-center gap-2">
+                                        <AlertCircle className="h-4 w-4" /> {emailError}
+                                    </p>
+                                )}
+                            </div>
+
                             {/* Remember me */}
                             <div className="flex items-center justify-between">
                                 <label className="inline-flex items-center gap-3">
@@ -136,7 +161,7 @@ export default function SignIn() {
                                     />
                                     <span className="text-sm text-gray-400">Remember me</span>
                                 </label>
-                                <a href="/sign-up" className="text-sm text-blue-400 hover:underline">Create account</a>
+                                <a href="/sign-in" className="text-sm text-blue-400 hover:underline">Sign In</a>
                             </div>
 
                             {/* Submit */}
@@ -145,7 +170,7 @@ export default function SignIn() {
                                 disabled={!canSubmit}
                                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white font-semibold px-4 py-3"
                             >
-                                {loading ? "Signing in..." : <><LogIn className="h-5 w-5" /> Sign in</>}
+                                {loading ? "Signing up..." : <><LogIn className="h-5 w-5" /> Sign Up</>}
                             </button>
 
                             {formError && (

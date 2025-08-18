@@ -6,7 +6,7 @@ type NavItem = { label: string; href: string };
 
 const HOME_HREF = "/";
 const MENU_LABEL = "Explore";
-const MENU_ITEMS: NavItem[] = [{ label: "About Me", href: "/about-me" }, { label: "Darts", href: "/darts" }];
+const MENU_ITEMS: NavItem[] = [{ label: "Sign In", href: "/sign-in" }, { label: "About Me", href: "/about-me" }, { label: "Darts", href: "/darts" }];
 
 export default function Header() {
   const [open, setOpen] = useState(false);

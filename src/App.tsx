@@ -5,6 +5,7 @@ import Cricket from './pages/Cricket';
 import X01 from './pages/X01';
 import AboutMe from './pages/AboutMe';
 import SignIn from './pages/SignIn'
+import SignUp from './pages/SignUp'
 import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/darts/x01" element={<X01 />} />
         <Route path="/about-me" element={<AboutMe />} />
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </>
