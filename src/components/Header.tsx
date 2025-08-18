@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Home } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isSignedIn, clearAuth } from "../utils/auth";
 
-type NavItem = { label: string; href: string };
+
+type NavItem = { label: string; href?: string; onClick?: () => void };
 
 const HOME_HREF = "/";
 const MENU_LABEL = "Explore";
@@ -12,6 +14,28 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const [signedIn, setSignedIn] = useState(isSignedIn());
+
+  useEffect(() => {
+      const sync = () => setSignedIn(isSignedIn());
+      window.addEventListener("storage", sync);
+      return () => window.removeEventListener("storage", sync);
+  }, []);
+
+  const handleSignOut = () => {
+      clearAuth();
+      setSignedIn(false);
+      setOpen(false);
+      setMobileOpen(false);
+      navigate("/sign-in");
+  };
+
+  const items: NavItem[] = signedIn
+      ? MENU_ITEMS.map(i =>
+          i.label === "Sign In" ? { label: "Sign Out", onClick: handleSignOut } : i
+        )
+      : MENU_ITEMS;
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -76,15 +100,25 @@ export default function Header() {
                   </div>
                 )}
                 <ul className="py-1">
-                  {MENU_ITEMS.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        to={item.href}
-                        className="block px-4 py-2 text-sm text-gray-300 transition hover:bg-gray-700 hover:text-white"
-                        onClick={() => setOpen(false)} // close dropdown after navigation
-                      >
-                        {item.label}
-                      </Link>
+                  {items.map((item) => (
+                    <li key={item.label}>
+                      {item.onClick ? (
+                        <button
+                          type="button"
+                          className="w-full text-left block px-4 py-2 text-sm text-gray-300 transition hover:bg-gray-700 hover:text-white"
+                          onClick={item.onClick}
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <Link
+                          to={item.href!}
+                          className="block px-4 py-2 text-sm text-gray-300 transition hover:bg-gray-700 hover:text-white"
+                          onClick={() => setOpen(false)}
+                        >
+                          {item.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -129,17 +163,27 @@ export default function Header() {
                       No links yet — add some!
                     </li>
                   )}
-                  {MENU_ITEMS.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        to={item.href}
-                        className="block rounded-md px-3 py-2 text-gray-300 transition hover:bg-gray-800 hover:text-white"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
+                    {items.map((item) => (
+                      <li key={item.label}>
+                        {item.onClick ? (
+                          <button
+                            type="button"
+                            className="w-full text-right block rounded-md px-3 py-2 text-gray-300 transition hover:bg-gray-800 hover:text-white"
+                            onClick={item.onClick}
+                          >
+                            {item.label}
+                          </button>
+                        ) : (
+                          <Link
+                            to={item.href!}
+                            className="block rounded-md px-3 py-2 text-gray-300 transition hover:bg-gray-800 hover:text-white"
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
                 </ul>
               </div>
             </nav>

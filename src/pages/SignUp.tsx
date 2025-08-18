@@ -8,7 +8,7 @@ export default function SignUp() {
     const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})[a-z0-9._-]+(?<![._-])$/;
     const PASSWORD_RE = /^[\x21-\x7E]+$/;
 
-    type SignUpResponse = { ok: boolean; message: string; access_token: string; token_type: string; role: string };
+    type SignUpResponse = { ok: boolean; message: string; access_token: string; token_type: string; expires_at: number; role: string };
     type ApiError = { detail?: string; message?: string };
 
     const [username, setUsername] = useState("");
@@ -57,7 +57,7 @@ export default function SignUp() {
             const data: SignUpResponse & ApiError = await res.json().catch(() => ({} as any));
 
             if (res.ok) {
-                setAuth(data.access_token, data.role, remember);
+                setAuth(data.access_token, data.role, data.expires_at, remember);
                 setFormSuccess("Signed up successfully. Redirecting…");
                 setTimeout(() => {
                     window.location.assign("/home");
