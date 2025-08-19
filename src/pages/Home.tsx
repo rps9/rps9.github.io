@@ -2,8 +2,17 @@ import { Github, Linkedin, Mail, ArrowDown } from 'lucide-react';
 import ExperienceCard from '../components/ExperienceCard';
 import SkillBadge from '../components/SkillBadge';
 import Header from '../components/Header';
+import { useEffect } from "react";
 
 function Home() {
+  // ping to warm up API and DB
+  useEffect(() => {
+      fetch("https://ryan-website-api.onrender.com/api/db/ping", {
+          method: "GET",
+          cache: "no-store",
+      }).catch(() => {});
+  }, []);
+
   return (
     <div className="bg-gray-900">
       <Header />

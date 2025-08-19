@@ -5,7 +5,8 @@ import { setAuth } from "../utils/auth";
 
 export default function SignIn() {
     const API_BASE = "https://ryan-website-api.onrender.com";
-    const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})[a-z0-9._-]+(?<![._-])$/;
+
+    const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})(?!.*[._-]\s*$)[A-Za-z0-9._-]+(?:\s*)$/;
     const PASSWORD_RE = /^[\x21-\x7E]+$/;
 
     type SignInResponse = { access_token: string; token_type: string; expires_at: number; role: string };
@@ -111,6 +112,7 @@ export default function SignIn() {
                                         onChange={(e) => setPassword(e.target.value)}
                                         onBlur={() => setTouched(t => ({ ...t, password: true }))}
                                         className="w-full rounded-xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 px-4 py-3 pr-12"
+                                        placeholder="password"
                                     />
                                     <button type="button" onClick={() => setShowPw(s => !s)}
                                         className="absolute inset-y-0 right-3 my-auto p-2 text-gray-400 hover:text-gray-200">

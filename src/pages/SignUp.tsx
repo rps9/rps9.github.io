@@ -5,8 +5,11 @@ import { setAuth } from "../utils/auth";
 
 export default function SignUp() {
     const API_BASE = "https://ryan-website-api.onrender.com";
-    const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})[a-z0-9._-]+(?<![._-])$/;
+
+    const USERNAME_RE = /^(?![._-])(?!.*[._-]{2})(?!.*[._-]\s*$)[A-Za-z0-9._-]+(?:\s*)$/;
     const PASSWORD_RE = /^[\x21-\x7E]+$/;
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
     type SignUpResponse = { ok: boolean; message: string; access_token: string; token_type: string; expires_at: number; role: string };
     type ApiError = { detail?: string; message?: string };
@@ -27,8 +30,8 @@ export default function SignUp() {
         null;
 
     const emailError =
-        (touched.email && (!email || email.length === 0)) ? "Email is required." :
-        (email && (!email.includes("@") || !email.split("@")[1]?.includes("."))) ? "Invalid email format." :
+        (touched.email && !email) ? "Email is required." :
+        (email && !EMAIL_RE.test(email)) ? "Invalid email format." :
         null;
 
     const passwordError =
