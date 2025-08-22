@@ -6,6 +6,7 @@ import X01 from './pages/X01';
 import AboutMe from './pages/AboutMe';
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import SongRecommendations from './pages/SongRecommendations'
 import OwnerControls from './pages/OwnerControls'
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/about-me" element={<AboutMe />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/song-recs" element={<SongRecommendations />} />
         <Route path="/owner-controls" element={<OwnerControls />} />
         <Route path="*" element={<Home />} />
       </Routes>

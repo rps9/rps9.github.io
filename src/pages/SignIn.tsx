@@ -147,7 +147,7 @@ export default function SignIn() {
 
                                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white font-semibold px-4 py-3"
                             >
-                                {loading ? <><Loader2 className="h-5 w-5 animate-spin" />This may take a while</> : <><LogIn className="h-5 w-5" /> Sign in</>}
+                                {loading ? <><Loader2 className="h-5 w-5 animate-spin" />Loading profile</> : <><LogIn className="h-5 w-5" /> Sign in</>}
                             </button>
 
                             {formError && (
